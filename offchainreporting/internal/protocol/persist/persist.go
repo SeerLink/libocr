@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/SeerLink/libocr/offchainreporting/loghelper"
 	"github.com/SeerLink/libocr/offchainreporting/types"
 )
 
@@ -15,7 +14,7 @@ type persistState struct {
 	configDigest    types.ConfigDigest
 	database        types.Database
 	databaseTimeout time.Duration
-	logger          loghelper.LoggerWithContext
+	logger          types.Logger
 
 	writtenState *types.PersistentState
 }
@@ -28,7 +27,7 @@ func Persist(
 	configDigest types.ConfigDigest,
 	database types.Database,
 	databaseTimeout time.Duration,
-	logger loghelper.LoggerWithContext,
+	logger types.Logger,
 ) {
 	ps := persistState{
 		ctx,
@@ -96,7 +95,7 @@ func (ps *persistState) writeIfNew(pendingState types.PersistentState) {
 		pendingState,
 	)
 	if err != nil {
-		ps.logger.ErrorIfNotCanceled("Persist: unexpected error while persisting state to database", writeCtx, types.LogFields{
+		ps.logger.Error("Persist: unexpected error while persisting state to database", types.LogFields{
 			"error": err,
 		})
 		return

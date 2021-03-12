@@ -11,7 +11,6 @@ import (
 	"github.com/libp2p/go-libp2p-core/peerstore"
 	"github.com/libp2p/go-libp2p-core/protocol"
 	ma "github.com/multiformats/go-multiaddr"
-	"github.com/SeerLink/libocr/offchainreporting/loghelper"
 	"github.com/SeerLink/libocr/offchainreporting/types"
 )
 
@@ -35,10 +34,10 @@ type ACLHost interface {
 type BasicACLHost struct {
 	host   host.Host
 	acl    ACL
-	logger loghelper.LoggerWithContext
+	logger types.Logger
 }
 
-func WrapACL(h host.Host, acl ACL, logger loghelper.LoggerWithContext) ACLHost {
+func WrapACL(h host.Host, acl ACL, logger types.Logger) ACLHost {
 	return &BasicACLHost{host: h, acl: acl, logger: logger}
 }
 

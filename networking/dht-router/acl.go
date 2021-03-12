@@ -6,7 +6,6 @@ import (
 
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/libp2p/go-libp2p-core/protocol"
-	"github.com/SeerLink/libocr/offchainreporting/loghelper"
 	"github.com/SeerLink/libocr/offchainreporting/types"
 )
 
@@ -30,10 +29,10 @@ type PermitListACL interface {
 type permitList struct {
 	allowed map[protocol.ID][]peer.ID // access control list. For protocols NOT in the table, the default decision is Permit.
 
-	logger loghelper.LoggerWithContext
+	logger types.Logger
 }
 
-func NewPermitListACL(logger loghelper.LoggerWithContext) PermitListACL {
+func NewPermitListACL(logger types.Logger) PermitListACL {
 	return permitList{
 		allowed: make(map[protocol.ID][]peer.ID),
 		logger:  logger,

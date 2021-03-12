@@ -5,7 +5,6 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/SeerLink/libocr/offchainreporting/internal/managed"
-	"github.com/SeerLink/libocr/offchainreporting/loghelper"
 	"github.com/SeerLink/libocr/offchainreporting/types"
 	"github.com/SeerLink/libocr/subprocesses"
 	"golang.org/x/sync/semaphore"
@@ -56,7 +55,6 @@ func (b *BootstrapNode) Start() error {
 	b.cancel = cancel
 	b.subprocesses.Go(func() {
 		defer cancel()
-		logger := loghelper.MakeRootLoggerWithContext(b.bootstrapArgs.Logger)
 		managed.RunManagedBootstrapNode(
 			ctx,
 
@@ -65,7 +63,7 @@ func (b *BootstrapNode) Start() error {
 			b.bootstrapArgs.ContractConfigTracker,
 			b.bootstrapArgs.Database,
 			b.bootstrapArgs.LocalConfig,
-			logger,
+			b.bootstrapArgs.Logger,
 		)
 	})
 	return nil

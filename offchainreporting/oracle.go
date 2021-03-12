@@ -5,7 +5,6 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/SeerLink/libocr/offchainreporting/internal/managed"
-	"github.com/SeerLink/libocr/offchainreporting/loghelper"
 	"github.com/SeerLink/libocr/offchainreporting/types"
 	"github.com/SeerLink/libocr/subprocesses"
 
@@ -79,8 +78,6 @@ func NewOracle(args OracleArgs) (*Oracle, error) {
 func (o *Oracle) Start() error {
 	o.failIfAlreadyStarted()
 
-	logger := loghelper.MakeRootLoggerWithContext(o.oracleArgs.Logger)
-
 	ctx, cancel := context.WithCancel(context.Background())
 	o.cancel = cancel
 	o.subprocesses.Go(func() {
@@ -94,7 +91,7 @@ func (o *Oracle) Start() error {
 			o.oracleArgs.Database,
 			o.oracleArgs.Datasource,
 			o.oracleArgs.LocalConfig,
-			logger,
+			o.oracleArgs.Logger,
 			o.oracleArgs.MonitoringEndpoint,
 			o.oracleArgs.BinaryNetworkEndpointFactory,
 			o.oracleArgs.PrivateKeys,

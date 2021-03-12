@@ -93,7 +93,7 @@ type ocrEndpoint struct {
 	// recv is exposed to clients of this network endpoint
 	recv chan types.BinaryMessageWithSender
 
-	logger loghelper.LoggerWithContext
+	logger types.Logger
 
 	// a map of rate limiters, one for each peer
 	recvRateLimiters map[types.OracleID]limiter
@@ -113,7 +113,7 @@ const (
 )
 
 func newOCREndpoint(
-	logger loghelper.LoggerWithContext,
+	logger types.Logger,
 	configDigest types.ConfigDigest,
 	peer *concretePeer,
 	peerIDs []p2ppeer.ID,
@@ -151,7 +151,7 @@ func newOCREndpoint(
 
 	protocolID := genProtocolID(configDigest)
 
-	logger = logger.MakeChild(types.LogFields{
+	logger = loghelper.MakeLoggerWithContext(logger, types.LogFields{
 		"protocolID":   protocolID,
 		"configDigest": configDigest.Hex(),
 		"oracleID":     ownOracleID,
@@ -384,7 +384,7 @@ func (o *ocrEndpoint) sendOnStream(destPeerID p2ppeer.ID, chSend <-chan []byte) 
 				// Exit early if the context was canceled by the Close function
 				return false
 			default:
-				o.logger.Warn("DHT lookup failed", types.LogFields{
+				o.logger.Error("DHT lookup failed", types.LogFields{
 					"err":            err,
 					"remoteOracleId": o.reversedPeerMapping[destPeerID],
 					"nRetry":         nRetry,

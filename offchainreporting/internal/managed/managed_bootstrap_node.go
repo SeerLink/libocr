@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/SeerLink/libocr/offchainreporting/internal/config"
-	"github.com/SeerLink/libocr/offchainreporting/loghelper"
 	"github.com/SeerLink/libocr/offchainreporting/types"
 	"github.com/SeerLink/libocr/subprocesses"
 )
@@ -19,7 +18,7 @@ func RunManagedBootstrapNode(
 	contractConfigTracker types.ContractConfigTracker,
 	database types.Database,
 	localConfig types.LocalConfig,
-	logger loghelper.LoggerWithContext,
+	logger types.Logger,
 ) {
 	mb := managedBootstrapNodeState{
 		ctx: ctx,
@@ -42,7 +41,7 @@ type managedBootstrapNodeState struct {
 	configTracker       types.ContractConfigTracker
 	database            types.Database
 	localConfig         types.LocalConfig
-	logger              loghelper.LoggerWithContext
+	logger              types.Logger
 
 	bootstrapper types.Bootstrapper
 	config       config.PublicConfig
@@ -149,7 +148,7 @@ func (mb *managedBootstrapNodeState) configChanged(cc types.ContractConfig) {
 	childCtx, childCancel := context.WithTimeout(mb.ctx, mb.localConfig.DatabaseTimeout)
 	defer childCancel()
 	if err := mb.database.WriteConfig(childCtx, cc); err != nil {
-		mb.logger.ErrorIfNotCanceled("ManagedBootstrapNode: error writing new config to database", childCtx, types.LogFields{
+		mb.logger.Error("ManagedBootstrapNode: error writing new config to database", types.LogFields{
 			"config": cc,
 			"error":  err,
 		})

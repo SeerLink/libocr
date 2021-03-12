@@ -3,11 +3,10 @@ package managed
 import (
 	"context"
 
-	"github.com/SeerLink/libocr/offchainreporting/loghelper"
 	"github.com/SeerLink/libocr/offchainreporting/types"
 )
 
-func loadConfigFromDatabase(ctx context.Context, database types.Database, logger loghelper.LoggerWithContext) *types.ContractConfig {
+func loadConfigFromDatabase(ctx context.Context, database types.Database, logger types.Logger) *types.ContractConfig {
 	cc, err := database.ReadConfig(ctx)
 	if err != nil {
 		logger.Error("loadConfigFromDatabase: Error during Database.ReadConfig", types.LogFields{

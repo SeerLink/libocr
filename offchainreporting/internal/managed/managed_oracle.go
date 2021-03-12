@@ -26,7 +26,7 @@ func RunManagedOracle(
 	database types.Database,
 	datasource types.DataSource,
 	localConfig types.LocalConfig,
-	logger loghelper.LoggerWithContext,
+	logger types.Logger,
 	monitoringEndpoint types.MonitoringEndpoint,
 	netEndpointFactory types.BinaryNetworkEndpointFactory,
 	privateKeys types.PrivateKeys,
@@ -58,7 +58,7 @@ type managedOracleState struct {
 	database            types.Database
 	datasource          types.DataSource
 	localConfig         types.LocalConfig
-	logger              loghelper.LoggerWithContext
+	logger              types.Logger
 	monitoringEndpoint  types.MonitoringEndpoint
 	netEndpointFactory  types.BinaryNetworkEndpointFactory
 	privateKeys         types.PrivateKeys
@@ -166,7 +166,7 @@ func (mo *managedOracleState) configChanged(contractConfig types.ContractConfig)
 		peerIDs = append(peerIDs, identity.PeerID)
 	}
 
-	childLogger := mo.logger.MakeChild(types.LogFields{
+	childLogger := loghelper.MakeLoggerWithContext(mo.logger, types.LogFields{
 		"configDigest": fmt.Sprintf("%x", mo.config.ConfigDigest),
 		"oid":          oid,
 	})
@@ -222,7 +222,7 @@ func (mo *managedOracleState) configChanged(contractConfig types.ContractConfig)
 	childCtx, childCancel := context.WithTimeout(mo.ctx, mo.localConfig.DatabaseTimeout)
 	defer childCancel()
 	if err := mo.database.WriteConfig(childCtx, contractConfig); err != nil {
-		mo.logger.ErrorIfNotCanceled("ManagedOracle: error writing new config to database", childCtx, types.LogFields{
+		mo.logger.Error("ManagedOracle: error writing new config to database", types.LogFields{
 			"configDigest": mo.config.ConfigDigest,
 			"config":       contractConfig,
 			"error":        err,

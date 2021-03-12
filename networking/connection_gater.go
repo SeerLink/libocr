@@ -23,13 +23,13 @@ allower interface {
 type connectionGater struct {
 	allowers    map[allower]struct{}
 	allowersMtx sync.RWMutex
-	logger      loghelper.LoggerWithContext
+	logger      types.Logger
 }
 
-func newConnectionGater(logger loghelper.LoggerWithContext) (*connectionGater, error) {
+func newConnectionGater(logger types.Logger) (*connectionGater, error) {
 	allowers := make(map[allower]struct{})
 
-	logger = logger.MakeChild(types.LogFields{
+	logger = loghelper.MakeLoggerWithContext(logger, types.LogFields{
 		"id": "ConnectionGater",
 	})
 

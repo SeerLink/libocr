@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/SeerLink/libocr/offchainreporting/internal/config"
-	"github.com/SeerLink/libocr/offchainreporting/loghelper"
 	"github.com/SeerLink/libocr/offchainreporting/types"
 	"github.com/SeerLink/libocr/subprocesses"
 )
@@ -24,7 +23,7 @@ func RunOracle(
 	id types.OracleID,
 	keys types.PrivateKeys,
 	localConfig types.LocalConfig,
-	logger loghelper.LoggerWithContext,
+	logger types.Logger,
 	netEndpoint NetworkEndpoint,
 	telemetrySender TelemetrySender,
 ) {
@@ -54,7 +53,7 @@ type oracleState struct {
 	datasource          types.DataSource
 	id                  types.OracleID
 	localConfig         types.LocalConfig
-	logger              loghelper.LoggerWithContext
+	logger              types.Logger
 	netEndpoint         NetworkEndpoint
 	PrivateKeys         types.PrivateKeys
 	telemetrySender     TelemetrySender

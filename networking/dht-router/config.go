@@ -14,7 +14,7 @@ type DHTNodeConfig struct {
 	prefix         protocol.ID
 	extension      protocol.ID
 	bootstrapNodes []peer.AddrInfo
-	logger         loghelper.LoggerWithContext
+	logger         types.Logger
 
 	// node will check connections to all bootstrap nodes at this interval
 	bootstrapCheckInterval time.Duration
@@ -23,16 +23,8 @@ type DHTNodeConfig struct {
 	announcementUserPrefix uint32
 }
 
-func BuildConfig(
-	bootstrapNodes []peer.AddrInfo,
-	prefix protocol.ID,
-	configDigest types.ConfigDigest,
-	logger loghelper.LoggerWithContext,
-	bootstrapConnectionCheckInterval time.Duration,
-	failureThreshold int,
-	extendedDHTLogging bool,
-	announcementUserPrefix uint32,
-) DHTNodeConfig {
+func BuildConfig(bootstrapNodes []peer.AddrInfo, prefix protocol.ID, configDigest types.ConfigDigest,
+	logger types.Logger, bootstrapConnectionCheckInterval time.Duration, failureThreshold int, extendedDHTLogging bool, announcementUserPrefix uint32) DHTNodeConfig {
 	extension := protocol.ID(fmt.Sprintf("/%x", configDigest))
 
 	c := DHTNodeConfig{
@@ -45,12 +37,14 @@ func BuildConfig(
 		announcementUserPrefix: announcementUserPrefix,
 	}
 
-	c.logger = logger.MakeChild(types.LogFields{
+	logger = loghelper.MakeLoggerWithContext(logger, types.LogFields{
 		"id":              "DHT",
 		"protocolID":      c.ProtocolID(),
 		"F":               failureThreshold,
 		"extendedLogging": extendedDHTLogging,
 	})
+
+	c.logger = logger
 
 	return c
 }
